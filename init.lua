@@ -1,5 +1,7 @@
 --[[
 
+Testing to see if commiting changes to the repo on github works
+
 upcoming changes are going to be plugins for workflow improvements around Git.
 
 most likely going to be three plugins (git-signs, fugitive and git-worktrees by the primeagen)
