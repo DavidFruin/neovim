@@ -1,17 +1,8 @@
 --[[
 
-Testing to see if commiting changes to the repo on github works
+Hey everyone this is the NeoVim config that I (David Fruin) use as my daily driver txt editor. Try it out if you would like!
 
-upcoming changes are going to be plugins for workflow improvements around Git.
-
-most likely going to be three plugins (git-signs, fugitive and git-worktrees by the primeagen)
-
-but this is the first version that will be stored on my github so after this you will be able to pick the version of this config you like best
-
-Thawnx - DavidFruin/
-
-
- ===============================
+===============================
    Keymap Reference
  ===============================
 
