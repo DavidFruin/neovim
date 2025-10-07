@@ -10,6 +10,8 @@ Hey everyone this is the NeoVim config that I (David Fruin) use as my daily driv
 
   <leader> = space
 
+ <leader>il (navigate to this file (init.lua) from anywhere)
+
  <Esc> (Clear search highlighting)
  <leader>q (Quit current buffer)
  <C-h> (Move to left window)
@@ -116,6 +118,13 @@ vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move up window" })
 vim.keymap.set("n", "<leader>v", "<cmd>vnew<CR>", { desc = "Vertical split" })
 vim.keymap.set("n", "<leader>n", "<cmd>new<CR>", { desc = "Horizontal split" })
 
+-- Nav to this file from anywhere
+vim.keymap.set(
+	"n",
+	"<leader>il",
+	":e ~/.config/nvim.David/init.lua<CR>",
+	{ desc = "Edit Neovim config (il = Init.Lua" }
+)
 -- ===============================
 --   Plugin Manager (vim.pack)
 -- ===============================
