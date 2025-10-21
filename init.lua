@@ -64,6 +64,23 @@ Hey everyone this is the NeoVim config that I (David Fruin) use as my daily driv
 --]]
 
 -- ===============================
+--   Bootstrap Lazy.nvim
+-- ===============================
+
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- ===============================
 --   Neovim Config
 -- ===============================
 
@@ -94,6 +111,7 @@ vim.o.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.o.inccommand = "split"
 vim.o.cursorline = true
+vim.o.cursorcolumn = true
 vim.o.scrolloff = 10
 vim.o.confirm = true
 
@@ -122,49 +140,51 @@ vim.keymap.set("n", "<leader>n", "<cmd>new<CR>", { desc = "Horizontal split" })
 vim.keymap.set(
 	"n",
 	"<leader>il",
-	":e ~/.config/nvim.David/init.lua<CR>",
+	":e ~/.config/nvim/init.lua<CR>",
 	{ desc = "Edit Neovim config (il = Init.Lua" }
 )
+
 -- ===============================
---   Plugin Manager (vim.pack)
+--   Lazy.nvim Setup
 -- ===============================
-vim.pack.add({
-	-- Core
-	"nvim-lua/plenary.nvim",
-	"folke/lazydev.nvim",
+require("lazy").setup({
+  -- Core
+  { "nvim-lua/plenary.nvim" },
+  { "folke/lazydev.nvim" },
 
-	-- File explorer
-	"stevearc/oil.nvim",
-	"nvim-tree/nvim-web-devicons",
+  -- File explorer
+  { "stevearc/oil.nvim" },
+  { "nvim-tree/nvim-web-devicons" },
 
-	-- UI / Utilities
-	"j-hui/fidget.nvim",
-	"folke/twilight.nvim",
-	"folke/which-key.nvim",
+  -- UI / Utilities
+  { "j-hui/fidget.nvim" },
+  { "folke/twilight.nvim" },
+  { "folke/which-key.nvim" },
+  { "folke/noice.nvim", dependencies = { "MunifTanjim/nui.nvim" } },
 
-	-- Completion
-	"saghen/blink.cmp",
+  -- Completion
+  { "saghen/blink.cmp" },
 
-	-- LSP / Mason
-	"williamboman/mason.nvim",
-	"williamboman/mason-lspconfig.nvim",
-	"WhoIsSethDaniel/mason-tool-installer.nvim",
-	"neovim/nvim-lspconfig",
+  -- LSP / Mason
+  { "williamboman/mason.nvim" },
+  { "williamboman/mason-lspconfig.nvim" },
+  { "WhoIsSethDaniel/mason-tool-installer.nvim" },
+  { "neovim/nvim-lspconfig" },
 
-	-- Formatting
-	"stevearc/conform.nvim",
+  -- Formatting
+  { "stevearc/conform.nvim" },
 
-	-- Telescope
-	"nvim-telescope/telescope.nvim",
-	"nvim-telescope/telescope-ui-select.nvim",
+  -- Telescope
+  { "nvim-telescope/telescope.nvim" },
+  { "nvim-telescope/telescope-ui-select.nvim" },
 
-	-- Harpoon v1
-	"ThePrimeagen/harpoon",
+  -- Harpoon v1
+  { "ThePrimeagen/harpoon" },
 
-	-- Colorschemes
-	"rose-pine/neovim",
-	"folke/tokyonight.nvim",
-	"EdenEast/nightfox.nvim",
+  -- Colorschemes
+  { "rose-pine/neovim" },
+  { "folke/tokyonight.nvim" },
+  { "EdenEast/nightfox.nvim" },
 })
 
 -- ===============================
@@ -281,6 +301,59 @@ pcall(function()
 		})
 	end, { desc = "Telescope: Find files in current buffer dir" })
 	vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Telescope: Keymaps" })
+end)
+
+-- Noice.nvim setup
+pcall(function()
+  require("noice").setup({
+    lsp = {
+      -- Override some LSP handlers for better markdown rendering (works with blink.cmp and Telescope)
+      override = {
+        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+        ["vim.lsp.util.stylize_markdown"] = true,
+        ["cmp.entry.get_documentation"] = true, -- Ties into your blink.cmp
+      },
+      -- Enable hover/signature help in popups
+      hover = {
+        enabled = true,
+        silent = false, -- Show a subtle notification when hovering
+      },
+      signature = {
+        enabled = true,
+        auto_trigger = true,
+      },
+    },
+    -- Use presets for common enhancements (customize as needed)
+    presets = {
+      bottom_search = true, -- Classic bottom cmdline for searches (plays nice with Telescope)
+      command_palette = false, -- Disable if you prefer native cmdline (or set to true for floating menu)
+      long_message_to_split = true, -- Long messages (e.g., LSP errors) open in a split
+      inc_rename = false, -- Disable unless you're using inc-rename.nvim
+      lsp_doc_border = true, -- Rounded borders on LSP docs (matches your diagnostic floats)
+    },
+    -- Optional: Route all messages through Noice by default
+    routes = {
+      {
+        filter = {
+          event = "msg_show",
+          any = {
+            { find = "%d+L, %d+B" },
+            { find = "; after #%d+" },
+            { find = "; before #%d+" },
+          },
+        },
+        view = "mini",
+      },
+    },
+    views = {
+      mini = {
+        timeout = 2000, -- Auto-dismiss mini notifications after 2s
+        position = {
+          row = "2%", -- Slight offset from top to avoid clutter
+        },
+      },
+    },
+  })
 end)
 
 -- Harpoon (v1)
