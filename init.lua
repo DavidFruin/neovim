@@ -3,62 +3,62 @@
 Hey everyone this is the NeoVim config that I (David Fruin) use as my daily driver txt editor. Try it out if you would like!
 
 ===============================
-   Keymap Reference
- ===============================
+Keymap Reference
+===============================
 
-  Global Keymaps (Basic Neovim actions) 
+Global Keymaps (Basic Neovim actions) 
 
-  <leader> = space
+<leader> = space
 
- <leader>il (navigate to this file (init.lua) from anywhere)
+<leader>il (navigate to this file (init.lua) from anywhere)
 
- <Esc> (Clear search highlighting)
- <leader>q (Quit current buffer)
- <C-h> (Move to left window)
- <C-l> (Move to right window)
- <C-j> (Move to down window)
- <C-k> (Move to up window)
- <leader>v (Vertical split new window)
- <leader>n (Horizontal split new windo)
- <leader>sc (Switch colorscheme in a list of 3 themes)
+<Esc> (Clear search highlighting)
+<leader>q (Quit current buffer)
+<C-h> (Move to left window)
+<C-l> (Move to right window)
+<C-j> (Move to down window)
+<C-k> (Move to up window)
+<leader>v (Vertical split new window)
+<leader>n (Horizontal split new windo)
+<leader>sc (Switch colorscheme in a list of 3 themes)
 
-  Oil (File explorer) 
- <leader>p (Toggle hidden files in Oil)
- <leader>e (Toggle Oil file explorer)
+Oil (File explorer) 
+<leader>p (Toggle hidden files in Oil)
+<leader>e (Toggle Oil file explorer)
 
-  Twilight (Focus mode for code) 
- <leader>l (Toggle Twilight
+Twilight (Focus mode for code) 
+<leader>l (Toggle Twilight
 
-  Conform (Code formatter) 
- <leader>cf (Format buffer)
+Conform (Code formatter) 
+<leader>cf (Format buffer)
 
-  Telescope (Fuzzy finder) 
- <leader>ff (Find files)
- <leader>fg (Live grep)
- <leader>fb (Switch buffers)
- <leader>fh (Help tags)
- <leader>fc (Commands)
- <leader>fk (Keymaps)
+Telescope (Fuzzy finder) 
+<leader>ff (Find files)
+<leader>fg (Live grep)
+<leader>fb (Switch buffers)
+<leader>fh (Help tags)
+<leader>fc (Commands)
+<leader>fk (Keymaps)
 
-  Harpoon (File bookmarks) 
- <leader>a (Add file)
- <leader>m (Menu)
- <leader>hn (Next file)
- <leader>hp (Previous file)
- <leader>h1 (Harpoon file 1)
- <leader>h2 (Harpoon file 2)
- <leader>h3 (Harpoon file 3)
- <leader>h4 (Harpoon file 4)
+Harpoon (File bookmarks) 
+<leader>a (Add file)
+<leader>m (Menu)
+<leader>hn (Next file)
+<leader>hp (Previous file)
+<leader>h1 (Harpoon file 1)
+<leader>h2 (Harpoon file 2)
+<leader>h3 (Harpoon file 3)
+<leader>h4 (Harpoon file 4)
 
-  LSP (Code intelligence, buffer-local on attach) 
- grn (Rename symbol)
- gra (Code action)
- grr (LSP references)
- grd (LSP definitions)
- gri (LSP implementations)
- grt (LSP type definitions)
- gO (Document symbols)
- gW (Workspace symbols)
+LSP (Code intelligence, buffer-local on attach) 
+grn (Rename symbol)
+gra (Code action)
+grr (LSP references)
+grd (LSP definitions)
+gri (LSP implementations)
+grt (LSP type definitions)
+gO (Document symbols)
+gW (Workspace symbols)
 <leader>th (Toggle inlay hints)
 
 --]]
@@ -69,14 +69,14 @@ Hey everyone this is the NeoVim config that I (David Fruin) use as my daily driv
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable",
-    lazypath,
-  })
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable",
+		lazypath,
+	})
 end
 vim.opt.rtp:prepend(lazypath)
 
@@ -137,54 +137,72 @@ vim.keymap.set("n", "<leader>v", "<cmd>vnew<CR>", { desc = "Vertical split" })
 vim.keymap.set("n", "<leader>n", "<cmd>new<CR>", { desc = "Horizontal split" })
 
 -- Nav to this file from anywhere
-vim.keymap.set(
-	"n",
-	"<leader>il",
-	":e ~/.config/nvim/init.lua<CR>",
-	{ desc = "Edit Neovim config (il = Init.Lua" }
-)
+vim.keymap.set("n", "<leader>il", ":e ~/.config/nvim/init.lua<CR>", { desc = "Edit Neovim config (il = Init.Lua" })
 
 -- ===============================
 --   Lazy.nvim Setup
 -- ===============================
 require("lazy").setup({
-  -- Core
-  { "nvim-lua/plenary.nvim" },
-  { "folke/lazydev.nvim" },
+	-- Core
+	{ "nvim-lua/plenary.nvim" },
+	{ -- Replace the bare lazydev spec with this
+		"folke/lazydev.nvim",
+		ft = "lua",
+		opts = {
+			library = {
+				-- Load Neovim runtime for better API support
+				-- (Add more if you develop plugins, e.g., "${3rd}/luv/library" for vim.uv)
+			},
+		},
+	},
 
-  -- File explorer
-  { "stevearc/oil.nvim" },
-  { "nvim-tree/nvim-web-devicons" },
+	-- File explorer
+	{ "stevearc/oil.nvim" },
+	{ "nvim-tree/nvim-web-devicons" },
 
-  -- UI / Utilities
-  { "j-hui/fidget.nvim" },
-  { "folke/twilight.nvim" },
-  { "folke/which-key.nvim" },
-  { "folke/noice.nvim", dependencies = { "MunifTanjim/nui.nvim" } },
+	-- UI / Utilities
+	{ "j-hui/fidget.nvim" },
+	{ "folke/twilight.nvim" },
+	{ "folke/which-key.nvim" },
+	--{ "folke/noice.nvim", dependencies = { "MunifTanjim/nui.nvim" } },
 
-  -- Completion
-  { "saghen/blink.cmp" },
+	-- Completion
+	{ -- Replace the bare blink.cmp spec with this
+		"saghen/blink.cmp",
+		opts = {
+			sources = {
+				default = { "lazydev", "lsp", "path", "snippets", "buffer" },
+				providers = {
+					lazydev = {
+						name = "LazyDev",
+						module = "lazydev.integrations.blink",
+						score_offset = 100, -- Prioritize lazydev completions
+					},
+				},
+			},
+		},
+	},
 
-  -- LSP / Mason
-  { "williamboman/mason.nvim" },
-  { "williamboman/mason-lspconfig.nvim" },
-  { "WhoIsSethDaniel/mason-tool-installer.nvim" },
-  { "neovim/nvim-lspconfig" },
+	-- LSP / Mason
+	{ "williamboman/mason.nvim" },
+	{ "williamboman/mason-lspconfig.nvim" },
+	{ "WhoIsSethDaniel/mason-tool-installer.nvim" },
+	{ "neovim/nvim-lspconfig" },
 
-  -- Formatting
-  { "stevearc/conform.nvim" },
+	-- Formatting
+	{ "stevearc/conform.nvim" },
 
-  -- Telescope
-  { "nvim-telescope/telescope.nvim" },
-  { "nvim-telescope/telescope-ui-select.nvim" },
+	-- Telescope
+	{ "nvim-telescope/telescope.nvim" },
+	{ "nvim-telescope/telescope-ui-select.nvim" },
 
-  -- Harpoon v1
-  { "ThePrimeagen/harpoon" },
+	-- Harpoon v1
+	{ "ThePrimeagen/harpoon" },
 
-  -- Colorschemes
-  { "rose-pine/neovim" },
-  { "folke/tokyonight.nvim" },
-  { "EdenEast/nightfox.nvim" },
+	-- Colorschemes
+	{ "rose-pine/neovim" },
+	{ "folke/tokyonight.nvim" },
+	{ "EdenEast/nightfox.nvim" },
 })
 
 -- ===============================
@@ -305,55 +323,55 @@ end)
 
 -- Noice.nvim setup
 pcall(function()
-  require("noice").setup({
-    lsp = {
-      -- Override some LSP handlers for better markdown rendering (works with blink.cmp and Telescope)
-      override = {
-        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-        ["vim.lsp.util.stylize_markdown"] = true,
-        ["cmp.entry.get_documentation"] = true, -- Ties into your blink.cmp
-      },
-      -- Enable hover/signature help in popups
-      hover = {
-        enabled = true,
-        silent = false, -- Show a subtle notification when hovering
-      },
-      signature = {
-        enabled = true,
-        auto_trigger = true,
-      },
-    },
-    -- Use presets for common enhancements (customize as needed)
-    presets = {
-      bottom_search = true, -- Classic bottom cmdline for searches (plays nice with Telescope)
-      command_palette = false, -- Disable if you prefer native cmdline (or set to true for floating menu)
-      long_message_to_split = true, -- Long messages (e.g., LSP errors) open in a split
-      inc_rename = false, -- Disable unless you're using inc-rename.nvim
-      lsp_doc_border = true, -- Rounded borders on LSP docs (matches your diagnostic floats)
-    },
-    -- Optional: Route all messages through Noice by default
-    routes = {
-      {
-        filter = {
-          event = "msg_show",
-          any = {
-            { find = "%d+L, %d+B" },
-            { find = "; after #%d+" },
-            { find = "; before #%d+" },
-          },
-        },
-        view = "mini",
-      },
-    },
-    views = {
-      mini = {
-        timeout = 2000, -- Auto-dismiss mini notifications after 2s
-        position = {
-          row = "2%", -- Slight offset from top to avoid clutter
-        },
-      },
-    },
-  })
+	require("noice").setup({
+		lsp = {
+			-- Override some LSP handlers for better markdown rendering (works with blink.cmp and Telescope)
+			override = {
+				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+				["vim.lsp.util.stylize_markdown"] = true,
+				["cmp.entry.get_documentation"] = true, -- Ties into your blink.cmp
+			},
+			-- Enable hover/signature help in popups
+			hover = {
+				enabled = true,
+				silent = false, -- Show a subtle notification when hovering
+			},
+			signature = {
+				enabled = true,
+				auto_trigger = true,
+			},
+		},
+		-- Use presets for common enhancements (customize as needed)
+		presets = {
+			bottom_search = false, -- Classic bottom cmdline for searches (plays nice with Telescope)
+			command_palette = false, -- Disable if you prefer native cmdline (or set to true for floating menu)
+			long_message_to_split = true, -- Long messages (e.g., LSP errors) open in a split
+			inc_rename = false, -- Disable unless you're using inc-rename.nvim
+			lsp_doc_border = true, -- Rounded borders on LSP docs (matches your diagnostic floats)
+		},
+		-- Optional: Route all messages through Noice by default
+		routes = {
+			{
+				filter = {
+					event = "msg_show",
+					any = {
+						{ find = "%d+L, %d+B" },
+						{ find = "; after #%d+" },
+						{ find = "; before #%d+" },
+					},
+				},
+				view = "mini",
+			},
+		},
+		views = {
+			mini = {
+				timeout = 2000, -- Auto-dismiss mini notifications after 2s
+				position = {
+					row = "2%", -- Slight offset from top to avoid clutter
+				},
+			},
+		},
+	})
 end)
 
 -- Harpoon (v1)
@@ -406,6 +424,9 @@ end)
 pcall(function()
 	require("mason").setup()
 	require("mason-tool-installer").setup({ ensure_installed = { "stylua" } })
+
+	-- Add this line to enable lazydev integration
+	require("lazydev").setup()
 
 	local capabilities = vim.lsp.protocol.make_client_capabilities()
 	pcall(function()
