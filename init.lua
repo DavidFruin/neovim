@@ -169,6 +169,7 @@ require("lazy").setup({
 	-- Completion
 	{
 		"saghen/blink.cmp",
+		dependencies = { "saghen/blink.lib" },
 		opts = {
 			sources = {
 				default = { "lazydev", "lsp", "path", "snippets", "buffer" },
