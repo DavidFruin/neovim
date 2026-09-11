@@ -68,7 +68,7 @@ gW (Workspace symbols)
 -- ===============================
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
 		"clone",
@@ -124,6 +124,7 @@ end)
 --   Global Keymaps
 -- ===============================
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+vim.keymap.set("n", ";", ":", { desc = "Command mode" })
 vim.keymap.set("n", "<leader>q", "<cmd>bd<CR>", { desc = "Quit current buffer" })
 
 -- Window navigation
@@ -137,7 +138,7 @@ vim.keymap.set("n", "<leader>v", "<cmd>vnew<CR>", { desc = "Vertical split" })
 vim.keymap.set("n", "<leader>n", "<cmd>new<CR>", { desc = "Horizontal split" })
 
 -- Nav to this file from anywhere
-vim.keymap.set("n", "<leader>il", ":e ~/.config/nvim/init.lua<CR>", { desc = "Edit Neovim config (il = Init.Lua" })
+vim.keymap.set("n", "<leader>il", ":e ~/.config/nvim/init.lua<CR>", { desc = "Edit Neovim config (il = Init.Lua)" })
 
 -- ===============================
 --   Lazy.nvim Setup
@@ -145,7 +146,7 @@ vim.keymap.set("n", "<leader>il", ":e ~/.config/nvim/init.lua<CR>", { desc = "Ed
 require("lazy").setup({
 	-- Core
 	{ "nvim-lua/plenary.nvim" },
-	{ -- Replace the bare lazydev spec with this
+	{
 		"folke/lazydev.nvim",
 		ft = "lua",
 		opts = {
@@ -164,10 +165,9 @@ require("lazy").setup({
 	{ "j-hui/fidget.nvim" },
 	{ "folke/twilight.nvim" },
 	{ "folke/which-key.nvim" },
-	--{ "folke/noice.nvim", dependencies = { "MunifTanjim/nui.nvim" } },
 
 	-- Completion
-	{ -- Replace the bare blink.cmp spec with this
+	{
 		"saghen/blink.cmp",
 		opts = {
 			sources = {
@@ -281,7 +281,7 @@ end, { desc = "Toggle Twilight" })
 pcall(function()
 	require("conform").setup({
 		formatters_by_ft = { lua = { "stylua" } },
-		format_on_save = { timeout_ms = 500, lsp_fallback = true },
+		format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
 	})
 end)
 vim.keymap.set({ "n", "v" }, "<leader>cf", function()
@@ -319,59 +319,6 @@ pcall(function()
 		})
 	end, { desc = "Telescope: Find files in current buffer dir" })
 	vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Telescope: Keymaps" })
-end)
-
--- Noice.nvim setup
-pcall(function()
-	require("noice").setup({
-		lsp = {
-			-- Override some LSP handlers for better markdown rendering (works with blink.cmp and Telescope)
-			override = {
-				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-				["vim.lsp.util.stylize_markdown"] = true,
-				["cmp.entry.get_documentation"] = true, -- Ties into your blink.cmp
-			},
-			-- Enable hover/signature help in popups
-			hover = {
-				enabled = true,
-				silent = false, -- Show a subtle notification when hovering
-			},
-			signature = {
-				enabled = true,
-				auto_trigger = true,
-			},
-		},
-		-- Use presets for common enhancements (customize as needed)
-		presets = {
-			bottom_search = false, -- Classic bottom cmdline for searches (plays nice with Telescope)
-			command_palette = false, -- Disable if you prefer native cmdline (or set to true for floating menu)
-			long_message_to_split = true, -- Long messages (e.g., LSP errors) open in a split
-			inc_rename = false, -- Disable unless you're using inc-rename.nvim
-			lsp_doc_border = true, -- Rounded borders on LSP docs (matches your diagnostic floats)
-		},
-		-- Optional: Route all messages through Noice by default
-		routes = {
-			{
-				filter = {
-					event = "msg_show",
-					any = {
-						{ find = "%d+L, %d+B" },
-						{ find = "; after #%d+" },
-						{ find = "; before #%d+" },
-					},
-				},
-				view = "mini",
-			},
-		},
-		views = {
-			mini = {
-				timeout = 2000, -- Auto-dismiss mini notifications after 2s
-				position = {
-					row = "2%", -- Slight offset from top to avoid clutter
-				},
-			},
-		},
-	})
 end)
 
 -- Harpoon (v1)
@@ -424,9 +371,6 @@ end)
 pcall(function()
 	require("mason").setup()
 	require("mason-tool-installer").setup({ ensure_installed = { "stylua" } })
-
-	-- Add this line to enable lazydev integration
-	require("lazydev").setup()
 
 	local capabilities = vim.lsp.protocol.make_client_capabilities()
 	pcall(function()
@@ -525,11 +469,4 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
-vim.api.nvim_create_autocmd("VimEnter", {
-	callback = function()
-		if vim.fn.argc() == 0 then
-			vim.cmd("")
-		end
-	end,
-	once = true,
-})
+
